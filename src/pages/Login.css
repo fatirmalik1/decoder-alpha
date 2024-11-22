@@ -35,4 +35,35 @@
     color: #222428;
 }
 
+.ripple-btn:hover {
+    background-color: #2a1a6d;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+    transition: background-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+}
 
+.glow-effect {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(193, 193, 193, 0.463);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: scale(0);
+    animation: zoom-pulse 1s ease-in-out forwards;
+}
+
+@keyframes zoom-pulse {
+    25% {
+        transform: scale(2);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}

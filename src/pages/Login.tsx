@@ -1,23 +1,21 @@
-import {IonButton, IonCard, IonCol, IonIcon, IonLabel, IonRouterLink, IonRow, isPlatform} from '@ionic/react';
-import React, {useEffect, useMemo, useState} from 'react';
+import {IonButton, IonCol, IonIcon, IonLabel, IonRouterLink, IonRow, isPlatform} from '@ionic/react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Redirect, useHistory} from 'react-router';
 import {instance} from '../axios';
 import Loader from '../components/Loader';
 import {useUser} from '../context/UserContext';
 import {environment} from '../environments/environment';
 import {auth} from '../firebase';
-import {  signInAnonymously, signInWithCustomToken ,browserSessionPersistence} from "firebase/auth";
+import {  signInAnonymously, signInWithCustomToken } from "firebase/auth";
 import "./Login.css"
 import { InAppBrowser }  from "@awesome-cordova-plugins/in-app-browser"
 import { useDispatch } from "react-redux"
-import { setDemo } from '../redux/slices/demoSlice';
-import NavLink from '../components/nav/NavLink';
 import IosLogo from '../images/app-store.png'
 import AndroidLogo from '../images/playstore.png'
-import { Grid } from '@material-ui/core';
 import {logoDiscord, logoTwitter,logoYoutube} from "ionicons/icons";
 import usePersistentState from '../hooks/usePersistentState';
 import meLogo from '../images/me.png';
+import { gsap } from 'gsap'
 
 /**
  * The "Login" page to which all unauthenticated users are redirected to
@@ -58,7 +56,34 @@ function Login() {
 
 
     const isMobileDevice = useMemo(() => isPlatform("mobile"), []);
+    const nftButtonRef = useRef<HTMLIonButtonElement | null>(null);
 
+    const handleMouseOver = (e: React.MouseEvent<HTMLIonButtonElement>) => {
+        if (!nftButtonRef.current) return;
+    
+        const button = nftButtonRef.current;
+    
+        const x = e.clientX - button.getBoundingClientRect().left;
+        const y = e.clientY - button.getBoundingClientRect().top;
+    
+        const glow = document.createElement('span');
+        glow.className = 'glow-effect';
+        glow.style.left = `${x}px`;
+        glow.style.top = `${y}px`;
+    
+        button.appendChild(glow);
+    
+        gsap.to(glow, {
+            scale: 5,
+            opacity: 0.2,
+            duration: 0.8,
+            ease: 'power1.out',
+            onComplete: () => {
+                glow.remove();
+            },
+        });
+    };
+    
     useEffect(() => {
         if (code && !error && !user) {
             // exchange authorization code given by discord for an access token which we can sign in with using firebase
@@ -187,7 +212,7 @@ function Login() {
                                     <div className='flex flex-row items-center justify-between ml-1 mr-1'>
                                         <div className='login-btn-devider'/> OR <div className='login-btn-devider'/>
                                     </div>
-                                    <IonButton className='buy-nft-btn mt-4 h-11'color='medium' onClick={()=> window.open('https://magiceden.io/marketplace/soldecoder', "_blank")}>
+                                    <IonButton className='buy-nft-btn mt-4 h-11'color='medium' onClick={()=> window.open('https://magiceden.io/marketplace/soldecoder', "_blank")} ref={nftButtonRef} onMouseMove={handleMouseOver}>
                                         <img src={meLogo} className="me-logo mr-2"/>
                                         Buy 1 NFT to gain access
                                     </IonButton>
